@@ -1,18 +1,19 @@
 {
   "version": "0.1.0",
-  "description": "An example Snap written in TypeScript.",
-  "proposedName": "TypeScript Example",
+  "description": "Onchain Reputation and Decentralized Identity Protocol",
+  "proposedName": "Nomis Protocol",
   "repository": {
     "type": "git",
     "url": "https://github.com/MetaMask/template-snap-monorepo.git"
   },
   "source": {
-    "shasum": "TwVBeJ/PL4uARBEFZmgJukYd3XWyTbilkOPhtdg+GvU=",
+    "shasum": "0c/RXEQOtSRSSvpGLWCofvzJWtg+c4mQ6ROjm0pvEo0=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
         "packageName": "snap",
-        "registry": "https://registry.npmjs.org/"
+        "registry": "https://registry.npmjs.org/",
+        "iconPath": "images/icon.svg"
       }
     }
   },
@@ -21,6 +22,12 @@
     "endowment:rpc": {
       "dapps": true,
       "snaps": false
+    },
+    "endowment:network-access": {},
+    "endowment:ethereum-provider": {},
+    "endowment:page-home": {},
+    "endowment:transaction-insight": {
+      "allowTransactionOrigin": true
     }
   },
   "manifestVersion": "0.1"

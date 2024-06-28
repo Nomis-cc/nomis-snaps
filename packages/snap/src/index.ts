@@ -1,12 +1,21 @@
-import type {
-  OnHomePageHandler,
-  OnInstallHandler,
-  OnRpcRequestHandler,
-  OnTransactionHandler,
-  OnUpdateHandler,
+import {
+  type OnHomePageHandler,
+  type OnInstallHandler,
+  type OnRpcRequestHandler,
+  type OnTransactionHandler,
+  type OnUpdateHandler,
+  type OnUserInputHandler,
 } from '@metamask/snaps-sdk';
 
-import { renderMainUi, renderPromptNextSteps, renderTransactionUi } from './ui';
+import { calculateScore } from './api';
+import {
+  renderMainUi,
+  renderMainUiWithError,
+  renderMainUiWithLoading,
+  renderMainUiWithScore,
+  renderPromptNextSteps,
+  renderTransactionUi,
+} from './ui';
 import { convertCAIP2ToHex, getAccount, getChainId } from './utils';
 
 export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
@@ -33,7 +42,11 @@ export const onUpdate: OnUpdateHandler = async () => {
 export const onHomePage: OnHomePageHandler = async () => {
   const [account, chainId] = await Promise.all([getAccount(), getChainId()]);
 
-  return renderMainUi(account, chainId);
+  const content = await renderMainUi(account, chainId);
+
+  return {
+    content,
+  };
 };
 
 export const onTransaction: OnTransactionHandler = async ({
@@ -41,4 +54,52 @@ export const onTransaction: OnTransactionHandler = async ({
   chainId,
 }) => {
   return renderTransactionUi(convertCAIP2ToHex(chainId), transaction.from);
+};
+
+export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
+  if (event.name === 'calculate-score') {
+    await snap.request({
+      method: 'snap_updateInterface',
+      params: {
+        id,
+        ui: renderMainUiWithLoading(),
+      },
+    });
+
+    const [account, chainId] = await Promise.all([getAccount(), getChainId()]);
+
+    try {
+      const { score, scoreName, url } = await calculateScore(chainId, account);
+
+      await snap.request({
+        method: 'snap_updateInterface',
+        params: {
+          id,
+          ui: renderMainUiWithScore(score, scoreName, url),
+        },
+      });
+    } catch {
+      await snap.request({
+        method: 'snap_updateInterface',
+        params: {
+          id,
+          ui: renderMainUiWithError(),
+        },
+      });
+    }
+  }
+
+  if (event.name === 'back') {
+    const [account, chainId] = await Promise.all([getAccount(), getChainId()]);
+
+    const ui = await renderMainUi(account, chainId);
+
+    await snap.request({
+      method: 'snap_updateInterface',
+      params: {
+        id,
+        ui,
+      },
+    });
+  }
 };

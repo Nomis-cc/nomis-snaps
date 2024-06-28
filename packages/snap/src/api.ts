@@ -1,4 +1,4 @@
-import type { Holder } from './types';
+import type { Holder, Score } from './types';
 
 const getData = async <ReturnType>(url: string) => {
   const response = await fetch(url);
@@ -12,7 +12,7 @@ const getData = async <ReturnType>(url: string) => {
 };
 
 export const calculateScore = async (chainId: string, address: string) =>
-  await getData(
+  await getData<Score>(
     `https://nomis.cc/api/snap/score?chainId=${chainId}&address=${address}`,
   );
 

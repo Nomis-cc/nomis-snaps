@@ -3,6 +3,7 @@ export type Holder = {
   score: number;
   scoreName: string;
   url: string;
+  image: string;
 };
 
 export type Score = {

@@ -1,5 +1,7 @@
-import type { DialogParams, Transaction } from '@metamask/snaps-sdk';
-import { heading, panel, text } from '@metamask/snaps-sdk';
+import type { DialogParams } from '@metamask/snaps-sdk';
+import { address, divider, heading, panel, text } from '@metamask/snaps-sdk';
+
+import { getScore } from './api';
 
 export const renderPromptNextSteps = async () => {
   return {
@@ -12,24 +14,37 @@ export const renderPromptNextSteps = async () => {
 };
 
 export const renderMainUi = async (account: string, chainId: string) => {
+  const { score, scoreName, url, isHolder } = await getScore(chainId, account);
+
   return {
     content: panel([
-      heading('Main UI heading'),
-      text(`Account: ${account}`),
-      text(`Chain ID: ${chainId}`),
+      heading(`${scoreName} Score: ${score || 'unknown'}`),
+      address(account as `0x${string}`),
+      divider(),
+      text(
+        `[${isHolder ? 'Update' : 'Get'} your score](https://nomis.cc${url})`,
+      ),
     ]),
   };
 };
 
-export const renderTransactionUi = async (
-  transaction: Transaction,
-  chainId: string,
-) => {
+export const renderTransactionUi = async (chainId: string, account: string) => {
+  const { score, scoreName, url, isHolder } = await getScore(chainId, account);
+
+  if (!isHolder) {
+    return {
+      content: panel([
+        heading(`Get your ${scoreName} Score`),
+        text(`[Get Score](https://nomis.cc${url})`),
+      ]),
+    };
+  }
+
   return {
     content: panel([
-      heading('Transaction UI heading'),
-      text(`Transaction from: ${transaction.from}`),
-      text(`Chain ID: ${chainId}`),
+      heading(`${scoreName} Score: ${score}`),
+      divider(),
+      text(`[Update your score](https://nomis.cc${url})`),
     ]),
   };
 };

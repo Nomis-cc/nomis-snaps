@@ -1,20 +1,22 @@
-// const getData = async (url: string) => {
-//   const response = await fetch(url, {
-//     method: 'GET',
-//   });
+import type { Holder } from './types';
 
-//   if (!response.ok) {
-//     console.error(`Call to ${url} failed with status ${response.status}`);
-//     throw new Error(`HTTP error! Status: ${response.status}`);
-//   }
+const getData = async <ReturnType>(url: string) => {
+  const response = await fetch(url);
 
-//   return response.json();
-// };
+  if (!response.ok) {
+    console.error(`Call to ${url} failed with status ${response.status}`);
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
 
-export const calculateScore = () => {
-  return null;
+  return response.json() as ReturnType;
 };
 
-export const getScore = () => {
-  return null;
-};
+export const calculateScore = async (chainId: string, address: string) =>
+  await getData(
+    `https://nomis.cc/api/snap/score?chainId=${chainId}&address=${address}`,
+  );
+
+export const getScore = async (chainId: string, address: string) =>
+  await getData<Holder>(
+    `https://nomis.cc/api/snap/holder?chainId=${chainId}&address=${address}`,
+  );

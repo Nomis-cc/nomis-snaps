@@ -18,3 +18,14 @@ export const getAccount = async () => {
 
   return accounts?.[0] ?? '';
 };
+
+export const convertCAIP2ToHex = (caip2: string) => {
+  const parts = caip2.split(':');
+  if (parts.length !== 2) {
+    throw new Error('Invalid CAIP-2 format');
+  }
+
+  const hexPart = parts[1] as string;
+
+  return `0x${hexPart}`;
+};

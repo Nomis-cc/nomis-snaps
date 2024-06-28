@@ -7,7 +7,7 @@ import type {
 } from '@metamask/snaps-sdk';
 
 import { renderMainUi, renderPromptNextSteps, renderTransactionUi } from './ui';
-import { getAccount, getChainId } from './utils';
+import { convertCAIP2ToHex, getAccount, getChainId } from './utils';
 
 export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
   switch (request.method) {
@@ -40,5 +40,5 @@ export const onTransaction: OnTransactionHandler = async ({
   transaction,
   chainId,
 }) => {
-  return renderTransactionUi(transaction, chainId);
+  return renderTransactionUi(convertCAIP2ToHex(chainId), transaction.from);
 };

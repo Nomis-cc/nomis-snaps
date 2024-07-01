@@ -87,29 +87,59 @@ export const renderMainUiWithError = () => {
   ]);
 };
 
-export const renderTransactionUi = async (chainId: string, account: string) => {
-  const { score, scoreName, url, isHolder, image } = await getScore(
-    chainId,
-    account,
-  );
+export const renderTransactionUi = async (
+  chainId: string,
+  senderAccount: string,
+  recipientAccount: string,
+) => {
+  const [senderData, recipientData] = await Promise.all([
+    getScore(chainId, senderAccount),
+    getScore(chainId, recipientAccount),
+  ]);
 
-  if (!isHolder) {
+  if (recipientData.isHolder) {
+    const displayData: Parameters<typeof panel>[0] = [
+      heading(
+        `Recipient ${recipientData.scoreName} Score: ${recipientData.score}`,
+      ),
+      divider(),
+      text(`[Get your score](https://nomis.cc${recipientData.url})`),
+    ];
+
+    if (recipientData.image) {
+      displayData.splice(
+        1,
+        0,
+        await getImageComponent(recipientData.image, { width: 400 }),
+      );
+    }
+
+    return {
+      content: panel(displayData),
+    };
+  }
+
+  if (!senderData.isHolder) {
     return {
       content: panel([
-        heading(`Get your ${scoreName} Score`),
-        text(`[Get Score](https://nomis.cc${url})`),
+        heading(`Get your ${senderData.scoreName} Score`),
+        text(`[Get Score](https://nomis.cc${senderData.url})`),
       ]),
     };
   }
 
   const displayData: Parameters<typeof panel>[0] = [
-    heading(`${scoreName} Score: ${score}`),
+    heading(`Your ${senderData.scoreName} Score: ${senderData.score}`),
     divider(),
-    text(`[Update your score](https://nomis.cc${url})`),
+    text(`[Update your score](https://nomis.cc${senderData.url})`),
   ];
 
-  if (image) {
-    displayData.splice(1, 0, await getImageComponent(image, { width: 400 }));
+  if (senderData.image) {
+    displayData.splice(
+      1,
+      0,
+      await getImageComponent(senderData.image, { width: 400 }),
+    );
   }
 
   return {

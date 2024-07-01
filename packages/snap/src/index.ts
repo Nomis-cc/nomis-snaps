@@ -53,7 +53,11 @@ export const onTransaction: OnTransactionHandler = async ({
   transaction,
   chainId,
 }) => {
-  return renderTransactionUi(convertCAIP2ToHex(chainId), transaction.from);
+  return renderTransactionUi(
+    convertCAIP2ToHex(chainId),
+    transaction.from,
+    transaction.to,
+  );
 };
 
 export const onUserInput: OnUserInputHandler = async ({ id, event }) => {

@@ -79,7 +79,12 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
         method: 'snap_updateInterface',
         params: {
           id,
-          ui: renderMainUiWithScore(score, scoreName, url),
+          ui: renderMainUiWithScore(
+            score,
+            scoreName,
+            url,
+            `https://nomis.cc/api/snap/score?chainId=${chainId}&address=${account}`,
+          ),
         },
       });
     } catch {

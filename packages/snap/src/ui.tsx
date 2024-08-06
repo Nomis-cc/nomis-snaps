@@ -55,10 +55,12 @@ export const renderMainUiWithScore = (
   score: number,
   scoreName: string,
   url: string,
+  link: string,
 ) => {
   return panel([
     heading(`${scoreName} Score: ${Number((score * 100).toFixed(2))}`),
     text(`[Mint your score](https://nomis.cc${url})`),
+    text(link),
     divider(),
     form({
       name: 'back',

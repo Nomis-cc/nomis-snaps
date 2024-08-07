@@ -1,11 +1,9 @@
-import {
-  type OnHomePageHandler,
-  type OnInstallHandler,
-  type OnRpcRequestHandler,
-  type OnTransactionHandler,
-  type OnUpdateHandler,
-  type OnUserInputHandler,
+import type {
+  OnRpcRequestHandler,
+  OnUserInputHandler,
+  OnTransactionHandler,
 } from '@metamask/snaps-sdk';
+import { type OnHomePageHandler } from '@metamask/snaps-sdk';
 
 import { calculateScore } from './api';
 import {
@@ -13,7 +11,6 @@ import {
   renderMainUiWithError,
   renderMainUiWithLoading,
   renderMainUiWithScore,
-  renderPromptNextSteps,
   renderTransactionUi,
 } from './ui';
 import { convertCAIP2ToHex, getAccount, getChainId } from './utils';
@@ -23,20 +20,6 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
     default:
       throw new Error('Method not found.');
   }
-};
-
-export const onInstall: OnInstallHandler = async () => {
-  await snap.request({
-    method: 'snap_dialog',
-    params: await renderPromptNextSteps(),
-  });
-};
-
-export const onUpdate: OnUpdateHandler = async () => {
-  await snap.request({
-    method: 'snap_dialog',
-    params: await renderPromptNextSteps(),
-  });
 };
 
 export const onHomePage: OnHomePageHandler = async () => {
@@ -79,12 +62,7 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
         method: 'snap_updateInterface',
         params: {
           id,
-          ui: renderMainUiWithScore(
-            score,
-            scoreName,
-            url,
-            `https://nomis.cc/api/snap/score?chainId=${chainId}&address=${account}`,
-          ),
+          ui: renderMainUiWithScore(score, scoreName, url),
         },
       });
     } catch {

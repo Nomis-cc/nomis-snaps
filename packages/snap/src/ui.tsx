@@ -140,7 +140,7 @@ export const renderTransactionUi = async (
     return {
       content: (
         <Box>
-          <Heading>Get your ${senderData.scoreName} Score</Heading>
+          <Heading>Get your {senderData.scoreName} Score</Heading>
           <Divider />
           <Text>
             <Link href={`https://nomis.cc${recipientData.url}`}>

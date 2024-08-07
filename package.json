@@ -56,5 +56,8 @@
       "@lavamoat/preinstall-always-fail": false,
       "sharp": true
     }
+  },
+  "dependencies": {
+    "@metamask/snaps-sdk": "^6.2.1"
   }
 }

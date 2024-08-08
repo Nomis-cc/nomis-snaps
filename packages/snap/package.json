@@ -10,7 +10,8 @@
   "main": "./dist/bundle.js",
   "files": [
     "dist/",
-    "snap.manifest.json"
+    "snap.manifest.json",
+    "images/icon.svg"
   ],
   "scripts": {
     "allow-scripts": "yarn workspace root allow-scripts",

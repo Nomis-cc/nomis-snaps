@@ -14438,9 +14438,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nomis-snap@workspace:packages/snap":
+"nomis@workspace:packages/snap":
   version: 0.0.0-use.local
-  resolution: "nomis-snap@workspace:packages/snap"
+  resolution: "nomis@workspace:packages/snap"
   dependencies:
     "@jest/globals": ^29.5.0
     "@metamask/auto-changelog": ^3.4.4

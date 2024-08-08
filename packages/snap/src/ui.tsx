@@ -16,46 +16,97 @@ import {
 
 import { getScore } from './api';
 
-export const renderMainUi = async (account: string, chainId: string) => {
-  const { score, scoreName, url, image, tokenId, updated_ms } = await getScore(
-    chainId,
-    account,
-  );
-
-  const imageSrc = await getImageComponent(image, { width: 400 });
-
+export const renderMainUiWithError = (error: string) => {
   return (
     <Box>
-      <Heading>{`${scoreName} Score: ${score || 'unknown'}`}</Heading>
-      <Divider />
-      <Image src={imageSrc.value} />
-      {score > 0 && (
+      <Heading>{error}</Heading>
+      <Form name="back">
+        <Button type="submit">Back</Button>
+      </Form>
+    </Box>
+  );
+};
+
+export const renderMainUi = async (account: string, chainId: string) => {
+  try {
+    const { score, scoreName, url, image, tokenId, updated_ms, referralCode } =
+      await getScore(chainId, account);
+
+    let imageSrc;
+
+    if (image) {
+      imageSrc = await getImageComponent(image, { width: 400 });
+    }
+
+    const twitterShareText = `I've just unlocked my potential with ${scoreName} Score by @0xNomis! What is your web3 reputation like? https://nomis.cc${url} %23OnchainReputation %23Nomis`;
+
+    const shareText = `I've just unlocked my potential with ${scoreName} Score by Nomis! What is your web3 reputation like? https://nomis.cc${url} %23OnchainReputation %23Nomis`;
+
+    if (!score) {
+      return (
+        <Box>
+          <Heading>{scoreName} Score: unknown</Heading>
+          <Divider />
+          <Box direction="horizontal" alignment="space-between">
+            <Text>
+              <Link href={`https://nomis.cc${url}`}>Mint your score</Link>
+            </Text>
+            <Form name="calculate-score">
+              <Button name="calculate-score" type="submit">
+                Calculate Score
+              </Button>
+            </Form>
+          </Box>
+        </Box>
+      );
+    }
+
+    return (
+      <Box>
+        <Heading>{`${scoreName} Score: ${score || 'unknown'}`}</Heading>
+        <Divider />
+        {imageSrc ? <Image src={imageSrc.value} /> : null}
         <Row label="Score">
           <Text>{String(score)}</Text>
         </Row>
-      )}
-      {score > 0 && (
         <Row label="Token id">
           <Text>{String(tokenId)}</Text>
         </Row>
-      )}
-      {score > 0 && (
         <Row label="Updated">
           <Text>{new Date(updated_ms).toLocaleString('en-Us')}</Text>
         </Row>
-      )}
-      <Box direction="horizontal" alignment="space-between">
-        <Text>
-          <Link href={`https://nomis.cc${url}`}>Mint your score</Link>
-        </Text>
-        <Form name="calculate-score">
-          <Button name="calculate-score" type="submit">
-            Calculate Score
-          </Button>
-        </Form>
+        <Box direction="horizontal" alignment="space-between">
+          <Text>
+            <Link href={`https://nomis.cc${url}`}>Mint your score</Link>
+          </Text>
+          <Form name="calculate-score">
+            <Button name="calculate-score" type="submit">
+              Calculate Score
+            </Button>
+          </Form>
+        </Box>
+        {referralCode ? <Divider /> : null}
+        {referralCode ? (
+          <Box direction="horizontal" alignment="space-between">
+            <Text>
+              <Link href={`https://twitter.com/share?url=${twitterShareText}`}>
+                Share in X
+              </Link>
+            </Text>
+            <Text>
+              <Link href={`https://t.me/share/url?url=${shareText}`}>
+                Share in Telegram
+              </Link>
+            </Text>
+          </Box>
+        ) : null}
       </Box>
-    </Box>
-  );
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+
+    return renderMainUiWithError(message);
+  }
 };
 
 export const renderMainUiWithLoading = () => {
@@ -63,6 +114,12 @@ export const renderMainUiWithLoading = () => {
     <Box>
       <Heading>Calculating score...</Heading>
       <Spinner />
+      <Divider />
+      <Form name="back">
+        <Button variant="destructive" type="submit">
+          Back
+        </Button>
+      </Form>
     </Box>
   );
 };
@@ -91,83 +148,63 @@ export const renderMainUiWithScore = (
   );
 };
 
-export const renderMainUiWithError = () => {
-  return (
-    <Box>
-      <Heading>Failed to calculate score</Heading>
-      <Form name="back">
-        <Button type="submit">Back</Button>
-      </Form>
-    </Box>
-  );
-};
-
 export const renderTransactionUi = async (
   chainId: string,
   senderAccount: string,
   recipientAccount: string,
 ) => {
-  const [senderData, recipientData] = await Promise.all([
-    getScore(chainId, senderAccount),
-    getScore(chainId, recipientAccount),
-  ]);
+  try {
+    const [senderData, recipientData] = await Promise.all([
+      getScore(chainId, senderAccount),
+      getScore(chainId, recipientAccount),
+    ]);
 
-  if (recipientData.isHolder) {
-    const imageSrc = await getImageComponent(recipientData.image, {
-      width: 400,
-    });
+    if (recipientData.isHolder) {
+      let imageSrc;
+
+      if (recipientData.image) {
+        imageSrc = await getImageComponent(recipientData.image, { width: 400 });
+      }
+
+      return {
+        content: (
+          <Box>
+            <Heading>
+              Recipient {recipientData.scoreName} Score:{' '}
+              {String(recipientData.score)}
+            </Heading>
+            <Divider />
+            {imageSrc?.value ? <Image src={imageSrc.value} /> : null}
+            <Text>
+              <Link href={`https://nomis.cc${recipientData.url}`}>
+                {senderData.isHolder ? 'Update your score' : 'Get your score'}
+              </Link>
+            </Text>
+          </Box>
+        ),
+      };
+    }
 
     return {
       content: (
         <Box>
           <Heading>
-            Recipient {recipientData.scoreName} Score:{' '}
-            {String(recipientData.score)}
+            Recipient doesn't have a {senderData.scoreName} Score
           </Heading>
           <Divider />
-          <Image src={imageSrc.value} />
           <Text>
             <Link href={`https://nomis.cc${recipientData.url}`}>
-              Get your score
+              {senderData.isHolder ? 'Update your score' : 'Get your score'}
             </Link>
           </Text>
         </Box>
       ),
     };
-  }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
 
-  if (!senderData.isHolder) {
     return {
-      content: (
-        <Box>
-          <Heading>Get your {senderData.scoreName} Score</Heading>
-          <Divider />
-          <Text>
-            <Link href={`https://nomis.cc${recipientData.url}`}>
-              Get your score
-            </Link>
-          </Text>
-        </Box>
-      ),
+      content: renderMainUiWithError(message),
     };
   }
-
-  const imageSrc = await getImageComponent(senderData.image, { width: 400 });
-
-  return {
-    content: (
-      <Box>
-        <Heading>
-          Your {senderData.scoreName} Score: {String(senderData.score)}
-        </Heading>
-        <Divider />
-        <Image src={imageSrc.value} />
-        <Text>
-          <Link href={`https://nomis.cc${senderData.url}`}>
-            Update your score
-          </Link>
-        </Text>
-      </Box>
-    ),
-  };
 };

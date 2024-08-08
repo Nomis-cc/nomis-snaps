@@ -114,11 +114,26 @@ const Index = () => {
     await invokeSnap({ method: 'hello' });
   };
 
+  const installSnap = async () => {
+    try {
+      const result = await window.ethereum.request({
+        method: 'wallet_requestSnaps',
+        params: {
+          'npm:nomis': {},
+        },
+      });
+      console.log('Snap installed:', result);
+    } catch (error) {
+      console.error('Error installing snap:', error);
+    }
+  };
+
   return (
     <Container>
       <Heading>
         Welcome to <Span>template-snap</Span>
       </Heading>
+
       <Subtitle>
         Get started by editing <code>src/index.ts</code>
       </Subtitle>
@@ -128,6 +143,16 @@ const Index = () => {
             <b>An error happened:</b> {error.message}
           </ErrorMessage>
         )}
+        <Card
+          content={{
+            title: 'Install',
+            description:
+              'Snaps is pre-release software only available in MetaMask Flask, a canary distribution for developers with access to upcoming features.',
+            button: <button onClick={installSnap}>Install snap</button>,
+          }}
+          fullWidth
+        />
+
         {!isMetaMaskReady && (
           <Card
             content={{

@@ -36,56 +36,83 @@ export const onTransaction: OnTransactionHandler = async ({
   transaction,
   chainId,
 }) => {
-  return renderTransactionUi(
-    convertCAIP2ToHex(chainId),
-    transaction.from,
-    transaction.to,
-  );
+  try {
+    return renderTransactionUi(
+      convertCAIP2ToHex(chainId),
+      transaction.from,
+      transaction.to,
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+
+    return { content: renderMainUiWithError(message) };
+  }
 };
 
 export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
-  if (event.name === 'calculate-score') {
-    await snap.request({
-      method: 'snap_updateInterface',
-      params: {
-        id,
-        ui: renderMainUiWithLoading(),
-      },
-    });
-
-    const [account, chainId] = await Promise.all([getAccount(), getChainId()]);
-
-    try {
-      const { score, scoreName, url } = await calculateScore(chainId, account);
-
+  try {
+    if (event.name === 'calculate-score') {
       await snap.request({
         method: 'snap_updateInterface',
         params: {
           id,
-          ui: renderMainUiWithScore(score, scoreName, url),
+          ui: renderMainUiWithLoading(),
         },
       });
-    } catch {
+
+      const [account, chainId] = await Promise.all([
+        getAccount(),
+        getChainId(),
+      ]);
+
+      try {
+        const { score, scoreName, url } = await calculateScore(
+          chainId,
+          account,
+        );
+
+        await snap.request({
+          method: 'snap_updateInterface',
+          params: {
+            id,
+            ui: renderMainUiWithScore(score, scoreName, url),
+          },
+        });
+      } catch {
+        await snap.request({
+          method: 'snap_updateInterface',
+          params: {
+            id,
+            ui: renderMainUiWithError('Failed to calculate score'),
+          },
+        });
+      }
+    }
+
+    if (event.name === 'back') {
+      const [account, chainId] = await Promise.all([
+        getAccount(),
+        getChainId(),
+      ]);
+
+      const ui = await renderMainUi(account, chainId);
+
       await snap.request({
         method: 'snap_updateInterface',
         params: {
           id,
-          ui: renderMainUiWithError(),
+          ui,
         },
       });
     }
-  }
-
-  if (event.name === 'back') {
-    const [account, chainId] = await Promise.all([getAccount(), getChainId()]);
-
-    const ui = await renderMainUi(account, chainId);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
 
     await snap.request({
       method: 'snap_updateInterface',
       params: {
         id,
-        ui,
+        ui: renderMainUiWithError(message),
       },
     });
   }

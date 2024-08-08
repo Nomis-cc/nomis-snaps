@@ -7,6 +7,7 @@ export type Holder = {
   image: string;
   tokenId: string;
   updated_ms: string;
+  referralCode: string;
 };
 
 export type Score = {

@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "description": "",
-  "homepage": "https://github.com/MetaMask/template-snap-monorepo#readme",
+  "homepage": "https://github.com/Nomis-cc/nomis-snaps#readme",
   "bugs": {
-    "url": "https://github.com/MetaMask/template-snap-monorepo/issues"
+    "url": "https://github.com/Nomis-cc/nomis-snaps/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MetaMask/template-snap-monorepo.git"
+    "url": "git+https://github.com/Nomis-cc/nomis-snaps.git"
   },
   "license": "(MIT-0 OR Apache-2.0)",
   "author": "",
@@ -24,6 +24,9 @@
     "lint:misc": "prettier '**/*.json' '**/*.md' '!**/CHANGELOG.md' '**/*.yml' --ignore-path .gitignore",
     "start": "yarn workspaces foreach --parallel --interlaced --verbose run start",
     "test": "yarn workspace snap run test"
+  },
+  "dependencies": {
+    "@metamask/snaps-sdk": "^6.2.1"
   },
   "devDependencies": {
     "@lavamoat/allow-scripts": "^3.0.0",
@@ -56,8 +59,5 @@
       "@lavamoat/preinstall-always-fail": false,
       "sharp": true
     }
-  },
-  "dependencies": {
-    "@metamask/snaps-sdk": "^6.2.1"
   }
 }

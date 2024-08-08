@@ -4,14 +4,14 @@
   "proposedName": "Nomis Protocol",
   "repository": {
     "type": "git",
-    "url": "https://github.com/MetaMask/template-snap-monorepo.git"
+    "url": "https://github.com/Nomis-cc/nomis-snaps.git"
   },
   "source": {
-    "shasum": "0C3mfmcJh/qFOWCIID/CAZs+VkoVzSeutoYPilVCoRw=",
+    "shasum": "FLSiqxW/xsoi//HFObHfb+sM9i9ysZYMSYtCr1drulw=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
-        "packageName": "snap",
+        "packageName": "nomis-snap",
         "registry": "https://registry.npmjs.org/",
         "iconPath": "images/icon.svg"
       }

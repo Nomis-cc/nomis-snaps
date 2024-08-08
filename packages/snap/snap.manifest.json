@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Onchain Reputation and Decentralized Identity Protocol",
   "proposedName": "Nomis Protocol",
   "repository": {
@@ -7,11 +7,11 @@
     "url": "https://github.com/Nomis-cc/nomis-snaps.git"
   },
   "source": {
-    "shasum": "FLSiqxW/xsoi//HFObHfb+sM9i9ysZYMSYtCr1drulw=",
+    "shasum": "7DQPaDWXUKVIVld5tLstWABGSqvNItmnOMDx8iUSCV4=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
-        "packageName": "nomis-snap",
+        "packageName": "nomis",
         "registry": "https://registry.npmjs.org/",
         "iconPath": "images/icon.svg"
       }

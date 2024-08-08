@@ -1,6 +1,6 @@
 {
-  "name": "nomis-snap",
-  "version": "0.1.0",
+  "name": "nomis",
+  "version": "0.1.2",
   "description": "Onchain Reputation and Decentralized Identity Protocol",
   "repository": {
     "type": "git",

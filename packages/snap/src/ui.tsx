@@ -38,9 +38,9 @@ export const renderMainUi = async (account: string, chainId: string) => {
       imageSrc = await getImageComponent(image, { width: 400 });
     }
 
-    const twitterShareText = `I've just unlocked my potential with ${scoreName} Score by @0xNomis! What is your web3 reputation like? https://nomis.cc${url} %23OnchainReputation %23Nomis`;
+    const twitterShareText = `I've just unlocked my potential with ${scoreName} Score by @0xNomis! What is your web3 reputation like? https://nomis.cc${url}?ref=${referralCode} %23OnchainReputation %23Nomis`;
 
-    const shareText = `I've just unlocked my potential with ${scoreName} Score by Nomis! What is your web3 reputation like? https://nomis.cc${url} %23OnchainReputation %23Nomis`;
+    const shareText = `I've just unlocked my potential with ${scoreName} Score by Nomis! What is your web3 reputation like? https://nomis.cc${url}?ref=${referralCode} %23OnchainReputation %23Nomis`;
 
     if (!score) {
       return (
